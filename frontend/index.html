@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DepGuard – Intelligent Software Dependency Risk Management</title>
+  <meta name="description" content="Enterprise Software Composition Analysis (SCA), Dependency DAG Graph, Blast Radius Impact Engine, and SBOM Generator for Java, Node.js, and Python.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+</head>
+<body>
+
+  <!-- =========================================================================
+       Cyber-Security SOC Authentication Portal (Login, Sign-Up, Forgot Password)
+       ========================================================================= -->
+  <div id="login-screen" class="login-wrapper">
+    <div class="login-glow-bg"></div>
+    <div class="login-box">
+      <div class="login-brand-header">
+        <div class="login-shield-icon">🛡️</div>
+        <h2 class="login-title" id="auth-panel-title">DepGuard SOC Portal</h2>
+        <p class="login-tagline" id="auth-panel-subtitle">Intelligent Software Dependency Risk Management</p>
+        <div class="login-clearance-pill">
+          <span class="pulse-dot"></span> AUTHORIZED SECURITY PERSONNEL ONLY
+        </div>
+      </div>
+
+      <!-- Global Auth Status / Error Alert Banner -->
+      <div id="auth-alert" class="auth-alert" style="display: none;"></div>
+
+      <!-- 1. LOGIN PANEL (Default) -->
+      <div id="auth-panel-login" class="auth-panel">
+        <form id="login-form" class="login-form-body" onsubmit="window.app.handleLogin(event)">
+          <div class="form-group">
+            <label for="login-username">Username or Registered Email ID</label>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">👤</span>
+              <input type="text" id="login-username" class="form-input with-icon" placeholder="e.g. sanjay.natarajan or sanjay@depguard.io" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label for="login-password" style="margin-bottom: 0;">Security Passcode / Password</label>
+              <a href="javascript:void(0)" class="auth-link-subtle" onclick="window.app.switchAuthView('forgot')">Forgot Password?</a>
+            </div>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">🔑</span>
+              <input type="password" id="login-password" class="form-input with-icon" placeholder="Enter security passcode" required>
+              <button type="button" class="btn-toggle-pw" onclick="window.app.togglePasswordVisibility('login-password')" title="Show/Hide Password">👁️</button>
+            </div>
+          </div>
+
+          <div class="login-options-bar">
+            <label class="remember-label">
+              <input type="checkbox" id="login-remember" checked>
+              <span>Keep session active</span>
+            </label>
+            <span class="standard-badge">ISO/IEC 27001</span>
+          </div>
+
+          <button type="submit" id="btn-login-submit" class="btn btn-primary btn-login-action">
+            🔐 Authenticate & Enter SOC Terminal
+          </button>
+        </form>
+
+        <div class="auth-switch-footer">
+          <span>New security personnel?</span>
+          <a href="javascript:void(0)" class="auth-link-bold" onclick="window.app.switchAuthView('signup')">Create an Authorized Account</a>
+        </div>
+      </div>
+
+      <!-- 2. SIGN UP PANEL (New User Registration) -->
+      <div id="auth-panel-signup" class="auth-panel" style="display: none;">
+        <form id="signup-form" class="login-form-body" onsubmit="window.app.handleSignUp(event)">
+          <div class="form-group">
+            <label for="reg-name">Full Name</label>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">👤</span>
+              <input type="text" id="reg-name" class="form-input with-icon" placeholder="e.g. Sanjay Natarajan" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-email">Work Email Address</label>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">📧</span>
+              <input type="email" id="reg-email" class="form-input with-icon" placeholder="name@company.com" required>
+            </div>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="reg-username">Username</label>
+              <input type="text" id="reg-username" class="form-input" placeholder="e.g. sanjay.natarajan" required>
+            </div>
+            <div class="form-group">
+              <label for="reg-role">Designation / Role</label>
+              <select id="reg-role" class="form-select">
+                <option value="Lead DevSecOps Engineer">Lead DevSecOps Engineer</option>
+                <option value="Senior Vulnerability Analyst">Senior Vulnerability Analyst</option>
+                <option value="Software Supply Chain Auditor">Software Supply Chain Auditor</option>
+                <option value="Security Operations Officer">Security Operations Officer</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-password">Security Password (min. 6 characters)</label>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">🔑</span>
+              <input type="password" id="reg-password" class="form-input with-icon" placeholder="Create strong password" required>
+              <button type="button" class="btn-toggle-pw" onclick="window.app.togglePasswordVisibility('reg-password')">👁️</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reg-confirm-password">Confirm Password</label>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">🔒</span>
+              <input type="password" id="reg-confirm-password" class="form-input with-icon" placeholder="Confirm password" required>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-signup-submit" class="btn btn-primary btn-login-action">
+            📝 Register Authorized Account
+          </button>
+        </form>
+
+        <div class="auth-switch-footer">
+          <span>Already authorized?</span>
+          <a href="javascript:void(0)" class="auth-link-bold" onclick="window.app.switchAuthView('login')">Return to Sign In</a>
+        </div>
+      </div>
+
+      <!-- 3. FORGOT PASSWORD PANEL (Passcode Reset) -->
+      <div id="auth-panel-forgot" class="auth-panel" style="display: none;">
+        <form id="forgot-form" class="login-form-body" onsubmit="window.app.handleForgotPassword(event)">
+          <div class="form-group">
+            <label for="forgot-identifier">Registered Username or Email ID</label>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">🔍</span>
+              <input type="text" id="forgot-identifier" class="form-input with-icon" placeholder="Enter your registered username or email" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="forgot-new-password">New Security Passcode (min. 6 characters)</label>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">🔑</span>
+              <input type="password" id="forgot-new-password" class="form-input with-icon" placeholder="Enter new password" required>
+              <button type="button" class="btn-toggle-pw" onclick="window.app.togglePasswordVisibility('forgot-new-password')">👁️</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="forgot-confirm-password">Confirm New Passcode</label>
+            <div class="input-icon-wrapper">
+              <span class="field-icon">🔒</span>
+              <input type="password" id="forgot-confirm-password" class="form-input with-icon" placeholder="Confirm new password" required>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-forgot-submit" class="btn btn-primary btn-login-action">
+            🔄 Reset Passcode & Return to Login
+          </button>
+        </form>
+
+        <div class="auth-switch-footer">
+          <span>Remembered your passcode?</span>
+          <a href="javascript:void(0)" class="auth-link-bold" onclick="window.app.switchAuthView('login')">Back to Sign In</a>
+        </div>
+      </div>
+
+      <div class="login-compliance-footer">
+        <p>🔒 <strong>AUTHORIZED USE ONLY:</strong> Access is audited in compliance with NIST SP 800-161 & US Executive Order 14028. All authentication attempts are logged.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       Main DepGuard Platform Container (Shown after Login)
+       ========================================================================= -->
+  <div id="main-app-container" style="display: none;">
+
+    <!-- Top Executive SOC Navigation Bar -->
+    <header class="soc-navbar">
+      <div class="brand-section">
+        <div class="brand-icon-shield">🛡️</div>
+        <div class="brand-text">
+          <h1>DepGuard</h1>
+          <div class="brand-tagline">Intelligent Dependency Risk Management</div>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Backend Status Pill -->
+        <div id="backend-status-pill" class="status-pill online">
+          <span class="pulse-dot"></span> Java Engine Online (port 8080)
+        </div>
+
+        <!-- Authenticated User Profile Pill -->
+        <div id="user-profile-badge" class="user-profile-pill">
+          <span class="user-avatar-circle" id="user-avatar-initials">SN</span>
+          <div class="user-text-meta">
+            <span id="user-nav-name" class="user-name">Sanjay Natarajan</span>
+            <span id="user-nav-role" class="user-role">Lead DevSecOps</span>
+          </div>
+        </div>
+
+        <!-- Quick Scan & Report Buttons -->
+        <button class="btn btn-secondary" onclick="window.app.exportAuditReport()">
+          📄 Export Report
+        </button>
+        <button class="btn btn-primary" onclick="window.app.openScanModal()">
+          🔍 New Repository Scan
+        </button>
+
+        <!-- Logout Button -->
+        <button class="btn btn-secondary btn-logout" onclick="window.app.logout()" title="Sign Out of SOC Session">
+          🚪 Sign Out
+        </button>
+      </div>
+    </header>
+
+    <!-- Project Meta & Ecosystem Quick-Select Subbar -->
+    <section class="sub-navbar">
+      <div class="project-meta-row">
+        <span class="project-name" id="current-project-name">fintech-payment-gateway</span>
+        <span class="eco-tag maven" id="current-ecosystem-tag">MAVEN</span>
+        <span class="scan-time" id="current-scan-time">Audit: Live</span>
+      </div>
+
+      <div class="quick-ecosystem-pills">
+        <span style="font-size: 0.8rem; color: var(--text-muted); align-self: center; margin-right: 4px;">Benchmark Presets:</span>
+        <button class="eco-btn" onclick="window.app.loadSample('maven')">☕ Java (Log4j / Spring)</button>
+        <button class="eco-btn" onclick="window.app.loadSample('npm')">⚡ Node.js (Axios / Lodash)</button>
+        <button class="eco-btn" onclick="window.app.loadSample('pypi')">🐍 Python (PyYAML / Requests)</button>
+      </div>
+    </section>
+
+    <!-- 6 Navigation Tabs -->
+    <nav class="tab-navigation-bar">
+      <button class="nav-tab active" data-tab="dashboard" onclick="window.app.switchTab('dashboard')">
+        📊 Security Scorecard
+      </button>
+      <button class="nav-tab" data-tab="graph" onclick="window.app.switchTab('graph')">
+        🌳 Dependency Graph & Tree
+      </button>
+      <button class="nav-tab highlight" data-tab="impact" onclick="window.app.switchTab('impact')">
+        💥 Blast Radius & Impact Analysis
+      </button>
+      <button class="nav-tab" data-tab="sbom" onclick="window.app.switchTab('sbom')">
+        📜 SBOM Studio (CycloneDX / SPDX)
+      </button>
+      <button class="nav-tab" data-tab="radar" onclick="window.app.switchTab('radar')">
+        📡 Maintenance & Abandonment Radar
+      </button>
+      <button class="nav-tab" data-tab="remediation" onclick="window.app.switchTab('remediation')">
+        🛠️ Remediation & Patch Advisory
+      </button>
+    </nav>
+
+    <!-- Main Views Container -->
+    <main class="main-content">
+
+      <!-- TAB 1: DASHBOARD / SCORECARD -->
+      <section id="view-dashboard" class="tab-view active">
+        <div class="dashboard-hero-grid">
+          <!-- Health Scorecard Gauge -->
+          <div class="card health-score-card">
+            <div class="circle-chart-box">
+              <svg viewBox="0 0 100 100">
+                <circle class="circle-bg" cx="50" cy="50" r="45"></circle>
+                <circle id="dash-score-circle" class="circle-fill" cx="50" cy="50" r="45"></circle>
+              </svg>
+              <span id="dash-health-score" class="circle-score-text">12</span>
+            </div>
+            <div class="score-details">
+              <span id="dash-risk-grade" class="grade-badge grade-f">Grade F</span>
+              <h3>Supply Chain Health</h3>
+              <p id="dash-exec-summary" class="score-summary-text">
+                CRITICAL RISK: High-throughput banking gateway contains actively exploitable Remote Code Execution vulnerabilities deep inside transitive trees.
+              </p>
+            </div>
+          </div>
+
+          <!-- Metric Stat Cards -->
+          <div class="stat-cards-row">
+            <div class="stat-metric-card">
+              <div class="stat-label">Total Dependencies</div>
+              <div id="dash-total-deps" class="stat-val">16</div>
+              <div id="dash-direct-trans" class="stat-sub">5 Direct / 11 Transitive</div>
+            </div>
+            <div class="stat-metric-card">
+              <div class="stat-label">Critical Vulnerabilities</div>
+              <div id="dash-crit-count" class="stat-val crit">6</div>
+              <div class="stat-sub">CVSS 9.0 - 10.0 (RCE Risk)</div>
+            </div>
+            <div class="stat-metric-card">
+              <div class="stat-label">High Severity CVEs</div>
+              <div id="dash-high-count" class="stat-val high">1</div>
+              <div class="stat-sub">CVSS 7.0 - 8.9</div>
+            </div>
+            <div class="stat-metric-card">
+              <div class="stat-label">Abandoned Packages</div>
+              <div id="dash-abandoned-count" class="stat-val">1</div>
+              <div class="stat-sub">>3 Years Without Release</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vulnerabilities Table -->
+        <div class="card">
+          <div class="card-header" style="margin-bottom: 14px;">
+            <h3>Identified Software Supply Chain Vulnerabilities</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">
+              Click any vulnerability row to launch the deep <strong>Dependency Impact & Blast Radius Visualizer</strong>.
+            </p>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Advisory ID</th>
+                  <th>Severity</th>
+                  <th>CVSS v3</th>
+                  <th>Affected Package</th>
+                  <th>Weakness Classification (CWE)</th>
+                  <th>Safe Fix Target</th>
+                </tr>
+              </thead>
+              <tbody id="dash-cve-table-body">
+                <!-- Rendered dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: DEPENDENCY GRAPH & TREE -->
+      <section id="view-graph" class="tab-view">
+        <div class="card">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <h3>Directed Acyclic Dependency Graph (DAG)</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">
+                Visualizes direct vs transitive library relationships, dependency nesting depth, and propagating security vulnerabilities.
+              </p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary" onclick="window.graphVis.render(window.app.currentScan, 'tree')">Hierarchical Tree</button>
+              <button class="btn btn-secondary" onclick="window.graphVis.render(window.app.currentScan, 'matrix')">Matrix Cards</button>
+            </div>
+          </div>
+          <div id="graph-render-target">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: STANDOUT FEATURE - IMPACT & BLAST RADIUS -->
+      <section id="view-impact" class="tab-view">
+        <div id="impact-render-target">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- TAB 4: SBOM STUDIO -->
+      <section id="view-sbom" class="tab-view">
+        <div id="sbom-render-target">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- TAB 5: MAINTENANCE & ABANDONMENT RADAR -->
+      <section id="view-radar" class="tab-view">
+        <div id="radar-render-target">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- TAB 6: REMEDIATION & PATCH ADVISORY -->
+      <section id="view-remediation" class="tab-view">
+        <div id="remediation-render-target">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+    </main>
+
+  </div><!-- /#main-app-container -->
+
+  <!-- Modal: New Scan Dialog -->
+  <div id="scan-modal" class="modal-overlay">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Connect & Scan Software Repository</h3>
+        <button class="close-btn" onclick="window.app.closeModal()">&times;</button>
+      </div>
+
+      <div class="scan-modal-tabs">
+        <button id="mtab-github" class="modal-tab-btn active" onclick="showModalTab('github')">GitHub Repository</button>
+        <button id="mtab-upload" class="modal-tab-btn" onclick="showModalTab('upload')">Upload Manifest File</button>
+        <button id="mtab-raw" class="modal-tab-btn" onclick="showModalTab('raw')">Paste Raw Code</button>
+      </div>
+
+      <!-- Mode 1: GitHub Connector -->
+      <div id="mcontent-github">
+        <div class="form-group">
+          <label>GitHub Repository URL or Owner/Repo</label>
+          <input type="text" id="github-repo-input" class="form-input" placeholder="e.g. sanjaynatarajanit/travel-booking-management or spring-projects/spring-petclinic" value="sanjaynatarajanit/travel-booking-management">
+        </div>
+        <div class="form-group">
+          <label>Quick Benchmark Profiles:</label>
+          <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 4px;">
+            <button class="btn btn-secondary" onclick="document.getElementById('github-repo-input').value='sanjaynatarajanit/travel-booking-management'">
+              ✈️ Sanjay Natarajan / Travel Booking Management (Full Stack)
+            </button>
+            <button class="btn btn-secondary" onclick="document.getElementById('github-repo-input').value='enterprise/fintech-payment-gateway'">
+              🏦 FinTech Java Banking Gateway (Maven, Log4j, Spring4Shell)
+            </button>
+            <button class="btn btn-secondary" onclick="document.getElementById('github-repo-input').value='saas/ecommerce-cloud-api'">
+              🛒 E-Commerce Cloud API (Node.js npm, Axios SSRF, Lodash)
+            </button>
+            <button class="btn btn-secondary" onclick="document.getElementById('github-repo-input').value='ai/data-pipeline-service'">
+              📊 Data Science Pipeline (Python, PyYAML, Urllib3)
+            </button>
+          </div>
+        </div>
+
+        <!-- Scanning Status Bar -->
+        <div id="scan-progress-box" style="display: none; margin-top: 14px; background: rgba(6, 182, 212, 0.1); border: 1px solid var(--border-focus); border-radius: 8px; padding: 12px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px;">
+            <span id="scan-progress-text" style="color: #38bdf8; font-weight: 600;">Connecting to repository...</span>
+            <span id="scan-progress-pct" style="color: var(--text-muted);">25%</span>
+          </div>
+          <div style="height: 6px; background: rgba(51, 65, 85, 0.6); border-radius: 3px; overflow: hidden;">
+            <div id="scan-progress-bar" style="height: 100%; width: 25%; background: linear-gradient(90deg, #06b6d4, #10b981); transition: width 0.3s;"></div>
+          </div>
+        </div>
+
+        <button id="btn-github-scan" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 12px;" onclick="window.app.triggerGitHubScan()">
+          🔍 Connect & Scan Repository
+        </button>
+      </div>
+
+      <!-- Mode 2: File Upload with Drag & Drop Zone -->
+      <div id="mcontent-upload" style="display: none;">
+        <div id="drop-zone" class="drop-zone" onclick="document.getElementById('file-upload-input').click()">
+          <div class="drop-icon">📁</div>
+          <h4>Drag & Drop Manifest File Here</h4>
+          <p>or click to browse from your computer</p>
+          <span class="drop-hint">Supports: pom.xml (Maven), package.json (npm), requirements.txt (Python)</span>
+          <input type="file" id="file-upload-input" style="display: none;" accept=".xml,.json,.txt" onchange="handleFileSelect(event)">
+        </div>
+      </div>
+
+      <!-- Mode 3: Raw Manifest Paste -->
+      <div id="mcontent-raw" style="display: none;">
+        <div class="form-group">
+          <label>Project Name</label>
+          <input type="text" id="raw-project-name" class="form-input" placeholder="my-service" value="custom-app">
+        </div>
+        <div class="form-group">
+          <label>Target Ecosystem</label>
+          <select id="raw-eco-select" class="form-select">
+            <option value="MAVEN">Maven (Java pom.xml)</option>
+            <option value="NPM">npm (Node.js package.json)</option>
+            <option value="PYPI">PyPI (Python requirements.txt)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Manifest File Content</label>
+          <textarea id="raw-manifest-content" class="form-textarea" rows="8" placeholder="Paste pom.xml, package.json or requirements.txt here..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="window.app.triggerRawScan()">
+          Run Dependency Security Analysis
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Detail Inspection Drawer -->
+  <aside id="node-detail-drawer" class="detail-drawer">
+    <div class="drawer-header">
+      <h3>Library Security Inspector</h3>
+      <button class="close-btn" onclick="window.app.closeDrawer()">&times;</button>
+    </div>
+    <div id="drawer-content" class="drawer-body">
+      <!-- Injected dynamically -->
+    </div>
+  </aside>
+
+  <!-- Scripts -->
+  <script src="js/sample-data.js"></script>
+  <script src="js/scanner-engine.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/graph-visualizer.js"></script>
+  <script src="js/impact-visualizer.js"></script>
+  <script src="js/sbom-viewer.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    function showModalTab(tab) {
+      document.getElementById('mcontent-github').style.display = tab === 'github' ? 'block' : 'none';
+      document.getElementById('mcontent-upload').style.display = tab === 'upload' ? 'block' : 'none';
+      document.getElementById('mcontent-raw').style.display = tab === 'raw' ? 'block' : 'none';
+
+      document.getElementById('mtab-github').classList.toggle('active', tab === 'github');
+      document.getElementById('mtab-upload').classList.toggle('active', tab === 'upload');
+      document.getElementById('mtab-raw').classList.toggle('active', tab === 'raw');
+    }
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const content = evt.target.result;
+        let eco = 'MAVEN';
+        if (file.name.includes('package.json')) eco = 'NPM';
+        else if (file.name.includes('requirements.txt')) eco = 'PYPI';
+
+        window.app.triggerDirectScan(file.name.replace(/\.[^/.]+$/, ""), eco, content);
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Nginx container to serve the Cyber-Security SOC frontend
+FROM nginx:alpine
+COPY frontend /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

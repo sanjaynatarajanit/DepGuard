@@ -1,0 +1,15 @@
+{
+  "name": "ecommerce-cloud-api",
+  "version": "1.8.2",
+  "description": "High-concurrency order processing API",
+  "dependencies": {
+    "express": "4.17.1",
+    "axios": "1.4.0",
+    "lodash": "4.17.15",
+    "jsonwebtoken": "8.5.1",
+    "socket.io": "4.1.2"
+  },
+  "devDependencies": {
+    "minimist": "1.2.0"
+  }
+}

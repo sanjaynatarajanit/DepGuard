@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  depguard-engine:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: depguard-engine
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - MODE=IN_MEMORY_ZERO_DB
+    restart: unless-stopped
+
+  depguard-soc-ui:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: depguard-soc-ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - depguard-engine
+    restart: unless-stopped
